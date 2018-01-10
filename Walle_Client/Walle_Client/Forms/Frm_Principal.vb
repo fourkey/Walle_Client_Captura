@@ -2,8 +2,10 @@
 Imports System.Management
 Imports System.IO
 Imports System.Net.NetworkInformation
+Imports FourkeyCripto
 
 Public Class Frm_Principal
+
 
     Public Versao As String = "4.5.1"
     Public Lista As New List(Of Class_Processos) 'Lista de processos executados
@@ -34,9 +36,11 @@ Public Class Frm_Principal
 
     Public fluxoTextoTem As IO.StreamWriter
 
+    Dim Pub As New Util
+
     'CRIPTOGRAFIA
-    Public Shared UserCript As String = My.Settings.CriptUser
-    Public Shared PassCript As String = My.Settings.CriptPass
+    Public Shared UserCript As String
+    Public Shared PassCript As String
     Public Shared ClientFourkey As String = ""
     Public Shared ClientLocation As String = ""
     Public Shared ClientLocalPasta As String = ""
@@ -63,6 +67,9 @@ Public Class Frm_Principal
 
         Me.ShowInTaskbar = False
         Me.WindowState = FormWindowState.Minimized
+
+        UserCript = Pub.Decifra(My.Settings.CriptUser)
+        PassCript = Pub.Decifra(My.Settings.CriptPass)
 
         Application.DoEvents()
 
@@ -144,7 +151,7 @@ Public Class Frm_Principal
             'Recebe o código de descriptografia
             ClientFourkey = Funcao.descarregarArquivo("ftp://ftp.fourkey.com.br", UserCript, PassCript, Funcao.GetUserClient())
             LicencaOndemand = Funcao.Ondemand("ftp://ftp.fourkey.com.br", UserCript,
-                                         PassCript, MeuArray, CodClienteWalle)
+                                                     PassCript, MeuArray, CodClienteWalle)
 
             Try
 
@@ -424,7 +431,7 @@ Public Class Frm_Principal
 
     End Sub
 
-    Private Sub NotifyIcon1_DoubleClick(sender As Object, e As EventArgs) 
+    Private Sub NotifyIcon1_DoubleClick(sender As Object, e As EventArgs)
 
         Frm_Auxiliar.Show()
         Frm_Auxiliar.WindowState = FormWindowState.Normal

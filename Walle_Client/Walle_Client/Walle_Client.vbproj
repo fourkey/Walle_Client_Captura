@@ -49,8 +49,11 @@
     <ApplicationIcon>favicon %281%29.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FourkeyCripto">
+      <HintPath>..\..\..\repos\FourkeyCripto\FourkeyCripto\bin\Debug\FourkeyCripto.dll</HintPath>
+    </Reference>
     <Reference Include="NDde">
-      <HintPath>..\..\..\Desktop\NDde.dll</HintPath>
+      <HintPath>.\NDde.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -82,6 +85,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\Class_Processos.vb" />
+    <Compile Include="Classes\Util.vb" />
     <Compile Include="Forms\Frm_Analise.Designer.vb">
       <DependentUpon>Frm_Analise.vb</DependentUpon>
     </Compile>

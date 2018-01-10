@@ -3,10 +3,10 @@
   <Profiles />
   <Settings>
     <Setting Name="CriptUser" Type="System.String" Scope="User">
-      <Value Profile="(Default)">myclient</Value>
+      <Value Profile="(Default)">k1ElcLx79zu9PbsYaHTTmA==</Value>
     </Setting>
     <Setting Name="CriptPass" Type="System.String" Scope="User">
-      <Value Profile="(Default)">$Tanqueviski69</Value>
+      <Value Profile="(Default)">g78RB48iJQweLl6LcCpscg==</Value>
     </Setting>
   </Settings>
 </SettingsFile>
