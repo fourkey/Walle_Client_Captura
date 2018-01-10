@@ -1,0 +1,4 @@
+﻿
+Class Mouse
+
+End Class
