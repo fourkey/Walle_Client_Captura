@@ -2,7 +2,6 @@
 Imports System.Management
 Imports System.IO
 Imports System.Net.NetworkInformation
-Imports FourkeyCripto
 
 Public Class Frm_Principal
 
@@ -41,6 +40,7 @@ Public Class Frm_Principal
     'CRIPTOGRAFIA
     Public Shared UserCript As String
     Public Shared PassCript As String
+    Public Shared CaminhoFtp As String
     Public Shared ClientFourkey As String = ""
     Public Shared ClientLocation As String = ""
     Public Shared ClientLocalPasta As String = ""
@@ -48,6 +48,7 @@ Public Class Frm_Principal
     Public Shared CodClienteWalle As String = ""
     Public Shared CodClienteUser As String = ""
     Public Shared LicencaOndemand As Boolean
+
 
     'URL
     Public Const ChromeProcess2 As [String] = "chrome"
@@ -70,6 +71,7 @@ Public Class Frm_Principal
 
         UserCript = Pub.Decifra(My.Settings.CriptUser)
         PassCript = Pub.Decifra(My.Settings.CriptPass)
+        CaminhoFtp = Pub.Decifra(My.Settings.PathFtp)
 
         Application.DoEvents()
 
@@ -149,13 +151,13 @@ Public Class Frm_Principal
             SetAttr(ClientLocation & "\Address", vbHidden)
 
             'Recebe o código de descriptografia
-            ClientFourkey = Funcao.descarregarArquivo("ftp://ftp.fourkey.com.br", UserCript, PassCript, Funcao.GetUserClient())
-            LicencaOndemand = Funcao.Ondemand("ftp://ftp.fourkey.com.br", UserCript,
+            ClientFourkey = Funcao.descarregarArquivo(CaminhoFtp, UserCript, PassCript, Funcao.GetUserClient())
+            LicencaOndemand = Funcao.Ondemand(CaminhoFtp, UserCript,
                                                      PassCript, MeuArray, CodClienteWalle)
 
             Try
 
-                If Funcao.descarregarArquivo2("ftp://ftp.fourkey.com.br", UserCript,
+                If Funcao.descarregarArquivo2(CaminhoFtp, UserCript,
                                          PassCript, MeuArray, CodClienteWalle) = False Then
 
                     Timer_ColetaDados.Enabled = False
@@ -193,7 +195,7 @@ Public Class Frm_Principal
 
         'Try
 
-        '    If Funcao.Check_Licenca("ftp://ftp.fourkey.com.br", EnderecoIPProcessador & ".txt", UserCript, PassCript, Funcao.GetUserClient()) = False Then
+        '    If Funcao.Check_Licenca(CaminhoFtp, EnderecoIPProcessador & ".txt", UserCript, PassCript, Funcao.GetUserClient()) = False Then
 
         '        For Each processo As Process In Process.GetProcesses()
 
@@ -396,7 +398,7 @@ Public Class Frm_Principal
 
         Try
 
-            If Funcao.descarregarArquivo2("ftp://ftp.fourkey.com.br", UserCript,
+            If Funcao.descarregarArquivo2(CaminhoFtp, UserCript,
                                      PassCript, MeuArray, CodClienteWalle) = False Then
 
                 Timer_ColetaDados.Enabled = False

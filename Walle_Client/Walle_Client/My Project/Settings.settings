@@ -8,5 +8,8 @@
     <Setting Name="CriptPass" Type="System.String" Scope="User">
       <Value Profile="(Default)">g78RB48iJQweLl6LcCpscg==</Value>
     </Setting>
+    <Setting Name="PathFtp" Type="System.String" Scope="User">
+      <Value Profile="(Default)">hCBWnew/fV4EK0khXCThqkbcUsUx3DM3vT27GGh005g=</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

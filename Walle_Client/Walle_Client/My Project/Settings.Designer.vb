@@ -77,6 +77,18 @@ Namespace My
                 Me("CriptPass") = value
             End Set
         End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("hCBWnew/fV4EK0khXCThqkbcUsUx3DM3vT27GGh005g=")>  _
+        Public Property PathFtp() As String
+            Get
+                Return CType(Me("PathFtp"),String)
+            End Get
+            Set
+                Me("PathFtp") = value
+            End Set
+        End Property
     End Class
 End Namespace
 

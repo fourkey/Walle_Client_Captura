@@ -535,7 +535,7 @@ ByVal lpWindowName As String
 
         Try
 
-            If descarregarArquivo2("ftp://ftp.fourkey.com.br", Frm_Principal.UserCript,
+            If descarregarArquivo2(Frm_Principal.CaminhoFtp, Frm_Principal.UserCript,
                                          Frm_Principal.PassCript, MeuArray, Frm_Principal.CodClienteWalle) = False Then
 
                 FecharCiclo = True
