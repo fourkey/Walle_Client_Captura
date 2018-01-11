@@ -1952,7 +1952,7 @@ Public Class Funcoes_Sistema
 
     Public Function GetUserClient() As String
 
-        Dim chave As New Rfc2898DeriveBytes("yekruof", sal)
+        Dim chave As New Rfc2898DeriveBytes(Pub.Decifra(My.Settings.KeyGetUser), sal)
         Dim algoritmo = New RijndaelManaged()
         Dim fluxoTexto As IO.StreamReader
         Dim linhaTexto As String

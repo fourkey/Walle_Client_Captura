@@ -11,5 +11,8 @@
     <Setting Name="PathFtp" Type="System.String" Scope="User">
       <Value Profile="(Default)">hCBWnew/fV4EK0khXCThqkbcUsUx3DM3vT27GGh005g=</Value>
     </Setting>
+    <Setting Name="KeyGetUser" Type="System.String" Scope="User">
+      <Value Profile="(Default)">tWTlAEySXoI=</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
