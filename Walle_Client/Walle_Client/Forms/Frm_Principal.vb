@@ -69,16 +69,22 @@ Public Class Frm_Principal
         Me.ShowInTaskbar = False
         Me.WindowState = FormWindowState.Minimized
 
+
+
         UserCript = Pub.Decifra(My.Settings.CriptUser)
         PassCript = Pub.Decifra(My.Settings.CriptPass)
         CaminhoFtp = Pub.Decifra(My.Settings.PathFtp)
+
+        Pub.Escreve_Log("DEBUG - Dados do FTP: " & vbCrLf &
+                        "Usuario: " & UserCript & " - Caminho: " & CaminhoFtp)
 
         Application.DoEvents()
 
         'Localiza a pasta de instalação
         ClientLocalPasta = System.Reflection.Assembly.GetExecutingAssembly().Location
-
         ClientLocalPasta = ClientLocalPasta.Replace("Walle_Client.exe", "")
+
+        Pub.Escreve_Log("DEBUG - Path EXE: " & ClientLocalPasta)
 
         'Buscar endereco Processador
         For Each info In search.Get()
@@ -142,6 +148,8 @@ Public Class Frm_Principal
             'Localiza a pasta onde deve ser salvo os pacotes
             ClientLocation = Funcao.GetLocationPath()
 
+            Pub.Escreve_Log("DEBUG - Path Pacotes: " & ClientLocation)
+
             If Directory.Exists(ClientLocation & "\Address") = False Then
 
                 Directory.CreateDirectory(ClientLocation & "\Address")
@@ -151,44 +159,46 @@ Public Class Frm_Principal
             SetAttr(ClientLocation & "\Address", vbHidden)
 
             'Recebe o código de descriptografia
-            ClientFourkey = Funcao.descarregarArquivo(CaminhoFtp, UserCript, PassCript, Funcao.GetUserClient())
-            LicencaOndemand = Funcao.Ondemand(CaminhoFtp, UserCript,
-                                                     PassCript, MeuArray, CodClienteWalle)
+            If Pub.VerificaConexaoFtp() = True Then
 
-            Try
+                ClientFourkey = Funcao.descarregarArquivo(CaminhoFtp, UserCript, PassCript, Funcao.GetUserClient())
+                LicencaOndemand = Funcao.Ondemand(CaminhoFtp, UserCript,
+                                                         PassCript, MeuArray, CodClienteWalle)
 
-                If Funcao.descarregarArquivo2(CaminhoFtp, UserCript,
-                                         PassCript, MeuArray, CodClienteWalle) = False Then
+                Try
+
+                    If Funcao.descarregarArquivo2(CaminhoFtp, UserCript,
+                                             PassCript, MeuArray, CodClienteWalle) = False Then
+
+                        Timer_ColetaDados.Enabled = False
+                        Timer_Licenca.Enabled = True
+                        MeuArray.Item(0) = CodClienteUser
+
+                    Else
+
+                        Timer_ColetaDados.Enabled = True
+
+                    End If
+
+                Catch ex As Exception
+
+                    Pub.Escreve_Log("CATCH - (" & MeuArray.Item(1) & " - " & MeuArray.Item(2) & ")" & ex.Message)
 
                     Timer_ColetaDados.Enabled = False
                     Timer_Licenca.Enabled = True
-                    MeuArray.Item(0) = CodClienteUser
 
-                Else
+                End Try
 
-                    Timer_ColetaDados.Enabled = True
+            Else
 
-                End If
+                Pub.Escreve_Log("WARNING - (Load - Form_Principal) Sem conexao com o FTP para buscar os dados necessários.")
 
-            Catch ex As Exception
+            End If
 
-                fluxoTexto = New IO.StreamWriter(ClientLocalPasta & "\Logs\Admin_Walle.txt", True)
-                fluxoTexto.WriteLine("------------------------")
-                fluxoTexto.WriteLine(Format(Now, "yyyy-MM-dd HH:mm:ss") & ": (" & MeuArray.Item(1) & " - " & MeuArray.Item(2) & ")" & ex.Message)
-                fluxoTexto.Close()
-
-                Timer_ColetaDados.Enabled = False
-                Timer_Licenca.Enabled = True
-
-            End Try
 
         Catch ex As Exception
 
-            fluxoTexto = New IO.StreamWriter(ClientLocalPasta & "\Logs\Admin_Walle.txt", True)
-            fluxoTexto.WriteLine("------------------------")
-            fluxoTexto.WriteLine(Format(Now, "yyyy-MM-dd HH:mm:ss") & ": (" & MeuArray.Item(1) & " - " & MeuArray.Item(2) & ")" & ex.Message)
-            fluxoTexto.Close()
-
+            Pub.Escreve_Log("CATCH - (" & MeuArray.Item(1) & " - " & MeuArray.Item(2) & ")" & ex.Message)
             Application.Exit()
 
         End Try
@@ -227,10 +237,7 @@ Public Class Frm_Principal
 
         'End Try
 
-
-
         GC.Collect()
-
 
         'Frm_Analise.Show()
 
@@ -396,30 +403,37 @@ Public Class Frm_Principal
 
         Dim fluxoTexto As IO.StreamWriter
 
-        Try
+        If Pub.VerificaConexaoFtp() = True Then
 
-            If Funcao.descarregarArquivo2(CaminhoFtp, UserCript,
-                                     PassCript, MeuArray, CodClienteWalle) = False Then
+            Try
 
-                Timer_ColetaDados.Enabled = False
+                If Funcao.descarregarArquivo2(CaminhoFtp, UserCript,
+                                         PassCript, MeuArray, CodClienteWalle) = False Then
 
-            Else
+                    Timer_ColetaDados.Enabled = False
 
-                Timer_ColetaDados.Enabled = True
-                Timer_Licenca.Enabled = False
+                Else
 
-            End If
+                    Timer_ColetaDados.Enabled = True
+                    Timer_Licenca.Enabled = False
 
-        Catch ex As Exception
+                End If
 
-            fluxoTexto = New IO.StreamWriter(ClientLocalPasta & "\Logs\Admin_Walle.txt", True)
-            fluxoTexto.WriteLine("------------------------")
-            fluxoTexto.WriteLine(Format(Now, "yyyy-MM-dd HH:mm:ss") & ": (" & MeuArray.Item(1) & " - " & MeuArray.Item(2) & ")" & ex.Message)
-            fluxoTexto.Close()
+            Catch ex As Exception
 
+                Pub.Escreve_Log("CATCH - (" & MeuArray.Item(1) & " - " & MeuArray.Item(2) & ")" & ex.Message)
+                Application.Exit()
+
+            End Try
+
+        Else
+
+
+            Pub.Escreve_Log("WARNING - (Timer_Licenca.Tick) - Falha ao se conectar com o Ftp para baixar os arquivos necessários.")
             Application.Exit()
 
-        End Try
+        End If
+
 
     End Sub
 
@@ -435,9 +449,9 @@ Public Class Frm_Principal
 
     Private Sub NotifyIcon1_DoubleClick(sender As Object, e As EventArgs)
 
-        Frm_Auxiliar.Show()
-        Frm_Auxiliar.WindowState = FormWindowState.Normal
-        Frm_Auxiliar.ShowInTaskbar = True
+        'Frm_Auxiliar.Show()
+        'Frm_Auxiliar.WindowState = FormWindowState.Normal
+        'Frm_Auxiliar.ShowInTaskbar = True
 
         ' MsgBox("Walle: Atenção, você não tem permissão para abrir esta aplicação", vbInformation)
 

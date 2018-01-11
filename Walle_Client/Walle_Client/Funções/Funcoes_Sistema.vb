@@ -21,27 +21,28 @@ Public Class Funcoes_Sistema
     Dim mensagem As String = ""
     Dim CapturaURLThread As New Thread(AddressOf GetChromeCurrentURL2) 'Thread de disparo do csv
     Private TripleDes As New TripleDESCryptoServiceProvider
+    Dim Pub As New Util
 
     Public Declare Function GetAsyncKeyState Lib "user32" (ByVal vKey As Int32) As Int16
 
-        Private Declare Auto Function FindWindow Lib "user32.dll" (
-ByVal lpClassName As String,
-ByVal lpWindowName As String
-) As IntPtr
+    Private Declare Auto Function FindWindow Lib "user32.dll" (
+                ByVal lpClassName As String,
+                ByVal lpWindowName As String
+                ) As IntPtr
 
-        <DllImport("user32.dll", EntryPoint:="GetWindowThreadProcessId")>
-        Private Shared Function GetWindowThreadProcessId(<InAttribute()> ByVal hWnd As IntPtr, ByRef lpdwProcessId As Integer) As Integer
-        End Function
+    <DllImport("user32.dll", EntryPoint:="GetWindowThreadProcessId")>
+    Private Shared Function GetWindowThreadProcessId(<InAttribute()> ByVal hWnd As IntPtr, ByRef lpdwProcessId As Integer) As Integer
+    End Function
 
-        <DllImport("user32.dll", EntryPoint:="GetForegroundWindow")> Private Shared Function GetForegroundWindow() As IntPtr
-        End Function
+    <DllImport("user32.dll", EntryPoint:="GetForegroundWindow")> Private Shared Function GetForegroundWindow() As IntPtr
+    End Function
 
-        <DllImport("user32.dll", SetLastError:=True, CharSet:=CharSet.Auto)> Private Shared Function GetWindowTextLength(ByVal hwnd As IntPtr) As Integer
-        End Function
+    <DllImport("user32.dll", SetLastError:=True, CharSet:=CharSet.Auto)> Private Shared Function GetWindowTextLength(ByVal hwnd As IntPtr) As Integer
+    End Function
 
-        <DllImport("user32.dll", EntryPoint:="GetWindowTextW")>
-        Private Shared Function GetWindowTextW(<InAttribute()> ByVal hWnd As IntPtr, <OutAttribute(), MarshalAs(UnmanagedType.LPWStr)> ByVal lpString As StringBuilder, ByVal nMaxCount As Integer) As Integer
-        End Function
+    <DllImport("user32.dll", EntryPoint:="GetWindowTextW")>
+    Private Shared Function GetWindowTextW(<InAttribute()> ByVal hWnd As IntPtr, <OutAttribute(), MarshalAs(UnmanagedType.LPWStr)> ByVal lpString As StringBuilder, ByVal nMaxCount As Integer) As Integer
+    End Function
 
     <DllImport("user32.dll", SetLastError:=True)>
     Private Shared Function LockWorkStation() As <MarshalAs(UnmanagedType.Bool)> Boolean
@@ -560,11 +561,7 @@ ByVal lpWindowName As String
 
         Catch ex As Exception
 
-            fluxoTexto2 = New IO.StreamWriter(Frm_Principal.ClientLocalPasta & "\Logs\Admin_Walle.txt", True)
-            fluxoTexto2.WriteLine("------------------------")
-            fluxoTexto2.WriteLine(Format(Now, "yyyy-MM-dd HH:mm:ss") & ": (" & Frm_Principal.MeuArray.Item(1) & " - " _
-                                 & Frm_Principal.MeuArray.Item(2) & ")" & ex.Message)
-            fluxoTexto2.Close()
+            Pub.Escreve_Log("CATCH - ( " & Frm_Principal.MeuArray.Item(1) & " - " & Frm_Principal.MeuArray.Item(2) & ")" & ex.Message)
 
             Application.Exit()
 
@@ -657,8 +654,13 @@ ByVal lpWindowName As String
 
                 Catch ex As Exception
 
-                    MsgBox("Walle: Atenção, você não tem permissão de gravação. Por favor entre em contato com os " _
-                        & "administradores do sistema", vbExclamation)
+                    Pub.Escreve_Log("CATCH - (GerarArquivo) - Acesso para criação de diretório em " & Frm_Principal.ClientLocation & " negado. Por favor entre em contato com os " _
+                        & "administradores do sistema")
+
+                    Application.Exit()
+
+                    'MsgBox("Walle: Atenção, você não tem permissão de gravação. Por favor entre em contato com os " _
+                    '    & "administradores do sistema", vbExclamation)
 
                 End Try
 
@@ -870,17 +872,17 @@ ByVal lpWindowName As String
 
         If Cursor.Position.X <> Frm_Principal.MouseX And Cursor.Position.Y <> Frm_Principal.MouseY Then
 
-                Frm_Principal.MouseX = Cursor.Position.X
-                Frm_Principal.MouseY = Cursor.Position.Y
+            Frm_Principal.MouseX = Cursor.Position.X
+            Frm_Principal.MouseY = Cursor.Position.Y
 
-                Frm_Principal.HoraMouseOciso = Format(Now, "yyyy-MM-dd HH: mm:ss")
+            Frm_Principal.HoraMouseOciso = Format(Now, "yyyy-MM-dd HH: mm:ss")
 
-                Return False
+            Return False
 
-            Else
+        Else
 
-                Frm_Principal.TempoMouseOcioso = DateDiff(DateInterval.Second, CDate(Frm_Principal.HoraMouseOciso),
-                                                  CDate(Format(Now, "yyyy-MM-dd HH:mm:ss"))).ToString
+            Frm_Principal.TempoMouseOcioso = DateDiff(DateInterval.Second, CDate(Frm_Principal.HoraMouseOciso),
+                                              CDate(Format(Now, "yyyy-MM-dd HH:mm:ss"))).ToString
 
             If Frm_Principal.TempoMouseOcioso >= 120 Then
 
@@ -890,11 +892,11 @@ ByVal lpWindowName As String
 
                 Return False
 
-                End If
-
             End If
 
-        End Function
+        End If
+
+    End Function
 
     Public Function AcionamentoDoTeclado(ByVal Letra As String) As String
 
@@ -913,9 +915,9 @@ ByVal lpWindowName As String
                 ElseIf Frm_Principal.ContTecla = 2 And logger = 105 Then
 
                     Frm_Principal.ContTecla = 0
-                    Frm_Auxiliar.Show()
-                    Frm_Auxiliar.WindowState = FormWindowState.Normal
-                    Frm_Auxiliar.ShowInTaskbar = True
+                    'Frm_Auxiliar.Show()
+                    'Frm_Auxiliar.WindowState = FormWindowState.Normal
+                    'Frm_Auxiliar.ShowInTaskbar = True
 
                 ElseIf Frm_Principal.ContTecla = 1 And logger <> 104 Then
 
@@ -1992,7 +1994,8 @@ ByVal lpWindowName As String
 
         Else
 
-            MsgBox("Walle: Atenção alguns arquivos foram movidos ou modificados indevidamente, por favor entre em contato com o fornecedor.", vbExclamation)
+            'Chamar o escreve log
+            Pub.Escreve_Log("WARNING - (GetUserClient) Alguns arquivos foram movidos ou modificados indevidamente.")
 
             Application.Exit()
 
