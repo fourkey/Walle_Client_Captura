@@ -69,7 +69,7 @@ Public Class Frm_Principal
         Me.ShowInTaskbar = False
         Me.WindowState = FormWindowState.Minimized
 
-
+        Pub.Escreve_Log("Iniciando aplicativo Walle_Client")
 
         UserCript = Pub.Decifra(My.Settings.CriptUser)
         PassCript = Pub.Decifra(My.Settings.CriptPass)
