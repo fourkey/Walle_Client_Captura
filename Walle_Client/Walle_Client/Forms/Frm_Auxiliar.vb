@@ -4,6 +4,7 @@ Public Class Frm_Auxiliar
 
     Public PassCriptograf As String
     Public Fechamento As Boolean = False
+    Dim Pub As New Util
 
     Private Sub TextBox1_KeyDown(sender As Object, e As KeyEventArgs) Handles tb_password.KeyDown
 
@@ -53,7 +54,7 @@ Public Class Frm_Auxiliar
 
     Private Sub Frm_Auxiliar_FormClosing(sender As Object, e As FormClosingEventArgs) Handles MyBase.FormClosing
 
-        Dim CaminhoWi As String = System.Reflection.Assembly.GetExecutingAssembly().Location
+        Dim CaminhoWi As String = Pub.Decifra(My.Settings.Location)
 
         CaminhoWi = CaminhoWi.Replace("Walle_Client.exe", "")
 

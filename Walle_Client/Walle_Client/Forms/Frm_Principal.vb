@@ -66,183 +66,193 @@ Public Class Frm_Principal
         Dim HostnameClient As String
         Dim IPClient As String
 
-        Me.ShowInTaskbar = False
-        Me.WindowState = FormWindowState.Minimized
-
-        Pub.Escreve_Log("Iniciando aplicativo Walle_Client")
-
-        UserCript = Pub.Decifra(My.Settings.CriptUser)
-        PassCript = Pub.Decifra(My.Settings.CriptPass)
-        CaminhoFtp = Pub.Decifra(My.Settings.PathFtp)
-
-        Pub.Escreve_Log("DEBUG - Dados do FTP: " & vbCrLf &
-                        "Usuario: " & UserCript & " - Caminho: " & CaminhoFtp)
-
-        Application.DoEvents()
-
-        'Localiza a pasta de instalação
-        ClientLocalPasta = System.Reflection.Assembly.GetExecutingAssembly().Location
-        ClientLocalPasta = ClientLocalPasta.Replace("Walle_Client.exe", "")
-
-        Pub.Escreve_Log("DEBUG - Path EXE: " & ClientLocalPasta)
-
-        'Buscar endereco Processador
-        For Each info In search.Get()
-
-            strProcessorId = info("processorId").ToString()
-
-        Next
-
-        strProcessorId = strProcessorId.Replace(":", "-")
-        strProcessorId = strProcessorId.Replace(".", "-")
-        strProcessorId = strProcessorId.Replace("{", "")
-        strProcessorId = strProcessorId.Replace("}", "")
-
-        EnderecoIPProcessador = strProcessorId
-
-        HostnameClient = Environment.MachineName
-        IPClient = Funcao.ObtemEnderecoIP()
-
-        MeuArray.Add("")
-        MeuArray.Add(HostnameClient)
-        MeuArray.Add(IPClient)
-
-        For Each processo As Process In Process.GetProcesses()
-
-            If processo.ProcessName = "Walle_Client" Then
-
-                Cont = Cont + 1
-
-            End If
-
-            If processo.ProcessName = "Walle_Client_Data" Then
-
-                ContService = 1
-
-            End If
-
-        Next processo
-
-        If Cont > 1 Then
-
-            Application.Exit()
-
-        End If
-
-        If ContService = 0 Then
-
-            Try
-
-                Shell("Walle_Client_Data.exe")
-
-            Catch ex As Exception
-
-                'Nada a fazer
-
-            End Try
-
-        End If
-
         Try
 
-            'Localiza a pasta onde deve ser salvo os pacotes
-            ClientLocation = Funcao.GetLocationPath()
+            Me.ShowInTaskbar = False
+            Me.WindowState = FormWindowState.Minimized
 
-            Pub.Escreve_Log("DEBUG - Path Pacotes: " & ClientLocation)
+            'Localiza a pasta de instalação
+            ClientLocalPasta = Pub.Decifra(My.Settings.Location)
+            ClientLocalPasta = ClientLocalPasta.Replace("Walle_Client.exe", "")
 
-            If Directory.Exists(ClientLocation & "\Address") = False Then
+            Pub.Escreve_Log("Iniciando aplicativo Walle_Client")
 
-                Directory.CreateDirectory(ClientLocation & "\Address")
+            UserCript = Pub.Decifra(My.Settings.CriptUser)
+            PassCript = Pub.Decifra(My.Settings.CriptPass)
+            CaminhoFtp = Pub.Decifra(My.Settings.PathFtp)
+
+            Pub.Escreve_Log("DEBUG - Dados do FTP: " & vbCrLf &
+                        "Usuario: " & UserCript & " - Caminho: " & CaminhoFtp)
+
+            Application.DoEvents()
+
+            Pub.Escreve_Log("DEBUG - Path EXE: " & ClientLocalPasta)
+
+            'Buscar endereco Processador
+            For Each info In search.Get()
+
+                strProcessorId = info("processorId").ToString()
+
+            Next
+
+            strProcessorId = strProcessorId.Replace(":", "-")
+            strProcessorId = strProcessorId.Replace(".", "-")
+            strProcessorId = strProcessorId.Replace("{", "")
+            strProcessorId = strProcessorId.Replace("}", "")
+
+            EnderecoIPProcessador = strProcessorId
+
+            HostnameClient = Environment.MachineName
+            IPClient = Funcao.ObtemEnderecoIP()
+
+            MeuArray.Add("")
+            MeuArray.Add(HostnameClient)
+            MeuArray.Add(IPClient)
+
+            For Each processo As Process In Process.GetProcesses()
+
+                If processo.ProcessName = "Walle_Client" Then
+
+                    Cont = Cont + 1
+
+                End If
+
+                If processo.ProcessName = "Walle_Client_Data" Then
+
+                    ContService = 1
+
+                End If
+
+            Next processo
+
+            If Cont > 1 Then
+
+                'Application.Exit()
 
             End If
 
-            SetAttr(ClientLocation & "\Address", vbHidden)
-
-            'Recebe o código de descriptografia
-            If Pub.VerificaConexaoFtp() = True Then
-
-                ClientFourkey = Funcao.descarregarArquivo(CaminhoFtp, UserCript, PassCript, Funcao.GetUserClient())
-                LicencaOndemand = Funcao.Ondemand(CaminhoFtp, UserCript,
-                                                         PassCript, MeuArray, CodClienteWalle)
+            If ContService = 0 Then
 
                 Try
 
-                    If Funcao.descarregarArquivo2(CaminhoFtp, UserCript,
-                                             PassCript, MeuArray, CodClienteWalle) = False Then
-
-                        Timer_ColetaDados.Enabled = False
-                        Timer_Licenca.Enabled = True
-                        MeuArray.Item(0) = CodClienteUser
-
-                    Else
-
-                        Timer_ColetaDados.Enabled = True
-
-                    End If
+                    Shell("Walle_Client_Data.exe")
 
                 Catch ex As Exception
 
-                    Pub.Escreve_Log("CATCH - (" & MeuArray.Item(1) & " - " & MeuArray.Item(2) & ")" & ex.Message)
-
-                    Timer_ColetaDados.Enabled = False
-                    Timer_Licenca.Enabled = True
+                    'Nada a fazer
 
                 End Try
 
-            Else
-
-                Pub.Escreve_Log("WARNING - (Load - Form_Principal) Sem conexao com o FTP para buscar os dados necessários.")
-
             End If
+
+            Try
+
+                'Localiza a pasta onde deve ser salvo os pacotes
+                ClientLocation = Funcao.GetLocationPath()
+
+                Pub.Escreve_Log("DEBUG - Path Pacotes: " & ClientLocation)
+
+                If Directory.Exists(ClientLocation & "\Address") = False Then
+
+                    Directory.CreateDirectory(ClientLocation & "\Address")
+
+                End If
+
+                SetAttr(ClientLocation & "\Address", vbHidden)
+
+                'Recebe o código de descriptografia
+Denovo:         If Pub.VerificaConexaoFtp() = True Then
+
+                    ClientFourkey = Funcao.descarregarArquivo(CaminhoFtp, UserCript, PassCript, Funcao.GetUserClient())
+                    LicencaOndemand = Funcao.Ondemand(CaminhoFtp, UserCript,
+                                                         PassCript, MeuArray, CodClienteWalle)
+
+                    Try
+
+                        If Funcao.descarregarArquivo2(CaminhoFtp, UserCript,
+                                             PassCript, MeuArray, CodClienteWalle) = False Then
+
+                            Timer_ColetaDados.Enabled = False
+                            Timer_Licenca.Enabled = True
+                            MeuArray.Item(0) = CodClienteUser
+
+                        Else
+
+                            Timer_ColetaDados.Enabled = True
+
+                        End If
+
+                    Catch ex As Exception
+
+                        Pub.Escreve_Log("CATCH - (" & MeuArray.Item(1) & " - " & MeuArray.Item(2) & ")" & ex.Message)
+
+                        Timer_ColetaDados.Enabled = False
+                        Timer_Licenca.Enabled = True
+
+                    End Try
+
+                Else
+
+                    Pub.Escreve_Log("WARNING - (Load - Form_Principal) Sem conexao com o FTP para buscar os dados necessários.")
+                    GoTo Denovo
+
+                End If
+
+
+            Catch ex As Exception
+
+                Pub.Escreve_Log("CATCH - (" & MeuArray.Item(1) & " - " & MeuArray.Item(2) & ")" & ex.Message)
+                Application.Exit()
+
+            End Try
+
+            'Try
+
+            '    If Funcao.Check_Licenca(CaminhoFtp, EnderecoIPProcessador & ".txt", UserCript, PassCript, Funcao.GetUserClient()) = False Then
+
+            '        For Each processo As Process In Process.GetProcesses()
+
+            '            If processo.ProcessName = "Walle_Client_Data" Then
+
+            '                processo.Kill()
+
+            '            End If
+
+            '        Next processo
+
+            '        MsgBox("Walle: Infelizmente sua licença expirou, por favor entre em contato com administrador do sistema. Código: " & EnderecoIPProcessador, vbInformation)
+
+            '        Frm_Auxiliar.Fechamento = True
+
+            '        Application.Exit()
+
+            '    End If
+
+            'Catch ex As Exception
+
+            '    fluxoTexto = New IO.StreamWriter(ClientLocalPasta & "\Logs\Walle_Client-" _
+            '                                             & Format(Now, "yyyy-MM-dd-HH-mm-ss") & ".txt")
+
+            '    fluxoTexto.WriteLine(ex.Message)
+            '    fluxoTexto.Close()
+
+            '    Application.Exit()
+
+            'End Try
+
+            GC.Collect()
+
+            'Frm_Analise.Show()
+
+            'ContruirArquivo = New Thread(AddressOf Funcao.GerarArquivo)
+            'ContruirArquivo.Start(ListaFinal)
 
 
         Catch ex As Exception
 
-            Pub.Escreve_Log("CATCH - (" & MeuArray.Item(1) & " - " & MeuArray.Item(2) & ")" & ex.Message)
-            Application.Exit()
+            Pub.Escreve_Log("Erro de execução: " & ex.Message)
 
         End Try
-
-        'Try
-
-        '    If Funcao.Check_Licenca(CaminhoFtp, EnderecoIPProcessador & ".txt", UserCript, PassCript, Funcao.GetUserClient()) = False Then
-
-        '        For Each processo As Process In Process.GetProcesses()
-
-        '            If processo.ProcessName = "Walle_Client_Data" Then
-
-        '                processo.Kill()
-
-        '            End If
-
-        '        Next processo
-
-        '        MsgBox("Walle: Infelizmente sua licença expirou, por favor entre em contato com administrador do sistema. Código: " & EnderecoIPProcessador, vbInformation)
-
-        '        Frm_Auxiliar.Fechamento = True
-
-        '        Application.Exit()
-
-        '    End If
-
-        'Catch ex As Exception
-
-        '    fluxoTexto = New IO.StreamWriter(ClientLocalPasta & "\Logs\Walle_Client-" _
-        '                                             & Format(Now, "yyyy-MM-dd-HH-mm-ss") & ".txt")
-
-        '    fluxoTexto.WriteLine(ex.Message)
-        '    fluxoTexto.Close()
-
-        '    Application.Exit()
-
-        'End Try
-
-        GC.Collect()
-
-        'Frm_Analise.Show()
-
-        'ContruirArquivo = New Thread(AddressOf Funcao.GerarArquivo)
-        'ContruirArquivo.Start(ListaFinal)
 
     End Sub
 

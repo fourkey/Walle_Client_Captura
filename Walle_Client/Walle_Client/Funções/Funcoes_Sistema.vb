@@ -693,6 +693,8 @@ Public Class Funcoes_Sistema
             fluxoTexto.WriteLine(Linha)
             fluxoTexto.Close()
 
+            Pub.Escreve_Log("Escrevendo no arquivo " & Arquivo)
+
             Dim CaminhoWi As String = System.Reflection.Assembly.GetExecutingAssembly().Location
 
             CaminhoWi = CaminhoWi.Replace("Walle_Client.exe", "")
@@ -1400,7 +1402,7 @@ Public Class Funcoes_Sistema
                             ByVal usuario As String, ByVal senha As String,
                             ByVal dirLocal As String) As String
 
-        Dim localFile As String = System.Reflection.Assembly.GetExecutingAssembly().Location & "yek.txt"
+        Dim localFile As String = Pub.Decifra(My.Settings.Location) & "yek.txt"
         Dim remoteFile As String = "/Walle/Client/" & dirLocal
         Dim host As String = arquivoFTP
         Dim fluxoTexto As IO.StreamReader
@@ -1441,11 +1443,11 @@ Public Class Funcoes_Sistema
             response.Close()
         End Using
 
-        fluxoTexto = New IO.StreamReader(System.Reflection.Assembly.GetExecutingAssembly().Location & "yek.txt")
+        fluxoTexto = New IO.StreamReader(Pub.Decifra(My.Settings.Location).ToString() & "yek.txt")
         linhaTexto = fluxoTexto.ReadLine
         fluxoTexto.Close()
 
-        My.Computer.FileSystem.DeleteFile(System.Reflection.Assembly.GetExecutingAssembly().Location & "yek.txt", FileIO.UIOption.OnlyErrorDialogs, FileIO.RecycleOption.DeletePermanently)
+        My.Computer.FileSystem.DeleteFile(Pub.Decifra(My.Settings.Location) & "yek.txt", FileIO.UIOption.OnlyErrorDialogs, FileIO.RecycleOption.DeletePermanently)
 
         Return linhaTexto
 
@@ -1957,7 +1959,7 @@ Public Class Funcoes_Sistema
         Dim fluxoTexto As IO.StreamReader
         Dim linhaTexto As String
         Dim Cliente As String = ""
-        Dim USERCLIENT As String = System.Reflection.Assembly.GetExecutingAssembly().Location & "USERCLIENT.txt"
+        Dim USERCLIENT As String = Pub.Decifra(My.Settings.Location) & "USERCLIENT.txt"
 
         USERCLIENT = USERCLIENT.Replace("Walle_Client.exe", "")
 
@@ -2035,7 +2037,7 @@ Public Class Funcoes_Sistema
 
     Public Function GetLocationPath() As String
 
-        Dim LocationString As String = System.Reflection.Assembly.GetExecutingAssembly().Location & "LOCATION.txt"
+        Dim LocationString As String = Pub.Decifra(My.Settings.Location) & "LOCATION.txt"
         Dim fluxoTexto As IO.StreamReader
         Dim linhaTexto As String = ""
 

@@ -14,5 +14,8 @@
     <Setting Name="KeyGetUser" Type="System.String" Scope="User">
       <Value Profile="(Default)">tWTlAEySXoI=</Value>
     </Setting>
+    <Setting Name="Location" Type="System.String" Scope="User">
+      <Value Profile="(Default)">OkG+Mn1htJMUpwamQ4tDkEe0I+hNpWuH6q/Nvz5S+zXf4BgifiNjYA==</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

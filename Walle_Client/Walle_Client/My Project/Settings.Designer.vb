@@ -101,6 +101,18 @@ Namespace My
                 Me("KeyGetUser") = value
             End Set
         End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("OkG+Mn1htJMUpwamQ4tDkEe0I+hNpWuH6q/Nvz5S+zXf4BgifiNjYA==")>  _
+        Public Property Location() As String
+            Get
+                Return CType(Me("Location"),String)
+            End Get
+            Set
+                Me("Location") = value
+            End Set
+        End Property
     End Class
 End Namespace
 
